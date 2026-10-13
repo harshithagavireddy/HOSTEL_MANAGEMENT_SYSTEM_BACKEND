@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}UrbanStay | Modern Living Hostel{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='dashboard.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    {% block navbar %}
+    <nav class="navbar {% block navbar_class %}{% endblock %}">
+        <a href="{{ url_for('public.index') }}" class="logo" style="text-decoration:none;">Urban<span>Stay</span></a>
+        <ul class="nav-links">
+            {% block nav_links %}
+            <li><a href="{{ url_for('public.index') }}#home">Home</a></li>
+            <li><a href="{{ url_for('public.index') }}#about">About</a></li>
+            <li><a href="{{ url_for('public.index') }}#rooms">Rooms</a></li>
+            <li><a href="{{ url_for('public.index') }}#facilities">Facilities</a></li>
+            <li><a href="{{ url_for('public.index') }}#gallery">Gallery</a></li>
+            <li><a href="{{ url_for('public.index') }}#contact">Contact Us</a></li>
+            {% endblock %}
+            {% if current_user.is_authenticated %}
+                <li>
+                    <a href="{{ url_for('dashboard.home') }}">
+                        <i class="fa-solid fa-gauge"></i> Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('auth.logout') }}">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </a>
+                </li>
+            {% else %}
+                <li><a href="{{ url_for('auth.login') }}"><i class="fa-solid fa-right-to-bracket"></i> Login</a></li>
+                <li><a href="{{ url_for('auth.register') }}"><i class="fa-solid fa-user-plus"></i> Register</a></li>
+            {% endif %}
+        </ul>
+        <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
+    </nav>
+    {% endblock %}
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-container">
+            {% for category, message in messages %}
+            <div class="flash-message flash-{{ category }}">
+                <span>{{ message }}</span>
+                <button type="button" class="flash-close" aria-label="Close">&times;</button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    {% block footer %}
+    <footer>
+        <p>&copy; 2026 UrbanStay Hostels. Built with passion.</p>
+    </footer>
+    {% endblock %}
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        document.querySelectorAll('.flash-close').forEach(btn => {
+            btn.addEventListener('click', () => btn.parentElement.remove());
+        });
+        setTimeout(() => {
+            document.querySelectorAll('.flash-message').forEach(el => el.classList.add('fade-out'));
+            setTimeout(() => document.querySelectorAll('.flash-message').forEach(el => el.remove()), 400);
+        }, 5000);
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

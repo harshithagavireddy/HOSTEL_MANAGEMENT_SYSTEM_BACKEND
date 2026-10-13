@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Book {{ room.room_type }} | UrbanStay{% endblock %}
+
+{% block navbar_class %}scrolled solid-nav{% endblock %}
+{% block body_class %}page-inner{% endblock %}
+
+{% block content %}
+<section class="section page-section">
+    <div class="container">
+        <h2 class="section-title">Book Room {{ room.room_number }}</h2>
+        <div class="book-layout">
+            <div class="book-card">
+                <img src="{{ url_for('static', filename=room.image_url or 'bed.jpg') }}" alt="{{ room.room_type }}">
+                <div class="room-info">
+                    <h3>{{ room.room_type }}</h3>
+                    <p>{{ room.description }}</p>
+                    <p><strong>Capacity:</strong> {{ room.capacity }} person(s)</p>
+                    <span class="price">Rs.{{ '%.0f'|format(room.price_monthly) }}/month</span>
+                </div>
+            </div>
+            <form method="POST" class="auth-form book-form">
+                <h3>Confirm Booking Request</h3>
+                <p class="form-hint">Your request will be <strong>pending</strong> until an admin approves it.</p>
+                <label for="check_in">Preferred Check-in Date</label>
+                <input type="date" id="check_in" name="check_in">
+                <label for="notes">Notes (optional)</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Any special requests..."></textarea>
+                <button type="submit" class="btn-primary">Submit Booking Request</button>
+                <a href="{{ url_for('public.index') }}#rooms" class="btn-link">Cancel</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

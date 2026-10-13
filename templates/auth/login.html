@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Login | UrbanStay{% endblock %}
+
+{% block navbar_class %}scrolled solid-nav{% endblock %}
+{% block body_class %}page-inner{% endblock %}
+
+{% block content %}
+<section class="section page-section">
+    <div class="container auth-container">
+        <div class="auth-card">
+            <h2>Welcome Back</h2>
+            <p class="form-hint">Sign in to manage bookings and your UrbanStay account.</p>
+            <form method="POST" class="auth-form">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required autofocus>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Your password" required>
+                <label class="checkbox-label">
+                    <input type="checkbox" name="remember" value="1"> Remember me
+                </label>
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+            <p class="auth-switch">Don't have an account? <a href="{{ url_for('auth.register') }}">Register</a></p>
+            <p class="auth-switch muted">Default admin: admin@urbanstay.com / admin123</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

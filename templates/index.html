@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}UrbanStay | Modern Living Hostel{% endblock %}
+
+{% block extra_css %}
+<style>
+    .room-card.delay-1 { animation-delay: 0.2s; }
+    .room-card.delay-2 { animation-delay: 0.4s; }
+</style>
+{% endblock %}
+
+{% block nav_links %}
+<li><a href="#home" class="active">Home</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#rooms">Rooms</a></li>
+<li><a href="#facilities">Facilities</a></li>
+<li><a href="#gallery">Gallery</a></li>
+<li><a href="#contact">Contact Us</a></li>
+{% endblock %}
+
+{% block content %}
+<header id="home" class="hero-section">
+    <div class="hero-content scroll-reveal fade-up">
+        <h1>Your Home Away <br>From Home</h1>
+        <p>Experience premium, secure, and community-driven hostel living designed for students and young professionals.</p>
+        <a href="#rooms" class="btn-primary">Book Your Bed Now</a>
+    </div>
+</header>
+
+<section id="about" class="section">
+    <div class="container about-container">
+        <div class="about-text scroll-reveal slide-left">
+            <h2>Welcome to UrbanStay</h2>
+            <p>Founded with a vision to redefine co-living, UrbanStay provides more than just a roof over your head. We foster a vibrant community where you can study, network, relax, and grow.</p>
+            <div class="about-features">
+                <div class="feat"><i class="fa-solid fa-shield-halved"></i> <span>24/7 Premium Security</span></div>
+                <div class="feat"><i class="fa-solid fa-utensils"></i> <span>Hygienic Mess Meals</span></div>
+            </div>
+        </div>
+        <div class="about-image scroll-reveal slide-right">
+            <img src="{{ url_for('static', filename='main.jpg') }}" alt="Hostel Lobby">
+        </div>
+    </div>
+</section>
+
+<section id="rooms" class="section bg-light">
+    <div class="container">
+        <h2 class="section-title scroll-reveal fade-up">Our Premium Rooms</h2>
+        <div class="grid rooms-grid">
+            {% if rooms %}
+                {% for room in rooms %}
+                <div class="room-card scroll-reveal fade-up {% if loop.index0 == 1 %}delay-1{% elif loop.index0 == 2 %}delay-2{% endif %}">
+                    <img src="{{ url_for('static', filename=room.image_url or 'bed.jpg') }}" alt="{{ room.room_type }}">
+                    <div class="room-info">
+                        <h3>{{ room.room_type }}</h3>
+                        <p>{{ room.description or 'Comfortable living at UrbanStay.' }}</p>
+                        <p class="room-meta"><strong>Room:</strong> {{ room.room_number }} &middot; <strong>Capacity:</strong> {{ room.capacity }}</p>
+                        <span class="price">Rs.{{ '%.0f'|format(room.price_monthly) }}/month</span>
+                        {% if current_user.is_authenticated and not current_user.is_admin %}
+                            <a href="{{ url_for('public.book_room', room_id=room.id) }}" class="btn-primary btn-sm">Book Now</a>
+                        {% elif not current_user.is_authenticated %}
+                            <a href="{{ url_for('auth.login') }}" class="btn-primary btn-sm">Login to Book</a>
+                        {% else %}
+                            <span class="badge badge-available">Available</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="empty-state">No rooms available at the moment. Please check back soon.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section id="facilities" class="section bg-light">
+    <div class="container">
+        <h2 class="section-title scroll-reveal fade-up">World-Class Facilities</h2>
+        <div class="facilities-grid">
+            <div class="facility-box scroll-reveal scale-up">
+                <div class="icon"><i class="fa-solid fa-wifi"></i></div>
+                <h3>High-Speed Wi-Fi</h3>
+                <p>Enjoy unlimited high-speed internet connectivity throughout the hostel for study, work, and entertainment.</p>
+            </div>
+            <div class="facility-box scroll-reveal scale-up">
+                <div class="icon"><i class="fa-solid fa-dumbbell"></i></div>
+                <h3>Modern Gym</h3>
+                <p>Stay fit with our fully equipped gym featuring modern fitness equipment and exercise machines.</p>
+            </div>
+            <div class="facility-box scroll-reveal scale-up">
+                <div class="icon"><i class="fa-solid fa-shirt"></i></div>
+                <h3>Laundry Service</h3>
+                <p>Convenient washing and ironing facilities are available to make your daily life easier.</p>
+            </div>
+            <div class="facility-box scroll-reveal scale-up">
+                <div class="icon"><i class="fa-solid fa-snowflake"></i></div>
+                <h3>Air-Conditioned Rooms</h3>
+                <p>Comfortable air-conditioned rooms provide a pleasant environment throughout the year.</p>
+            </div>
+            <div class="facility-box scroll-reveal scale-up">
+                <div class="icon"><i class="fa-solid fa-users"></i></div>
+                <h3>Visitor Lounge</h3>
+                <p>A spacious and comfortable visitor area where friends and family can meet residents.</p>
+            </div>
+            <div class="facility-box scroll-reveal scale-up">
+                <div class="icon"><i class="fa-solid fa-kitchen-set"></i></div>
+                <h3>Common Kitchen</h3>
+                <p>A clean and fully equipped shared kitchen for preparing meals whenever you like.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="gallery" class="section bg-light">
+    <div class="container">
+        <h2 class="section-title scroll-reveal fade-up">Life at UrbanStay</h2>
+        <div class="gallery-grid">
+            <div class="gallery-item scroll-reveal scale-up"><img src="{{ url_for('static', filename='out.jpg') }}" alt="Gallery 1"></div>
+            <div class="gallery-item scroll-reveal scale-up"><img src="{{ url_for('static', filename='girl.jpg') }}" alt="Gallery 2"></div>
+            <div class="gallery-item scroll-reveal scale-up"><img src="{{ url_for('static', filename='hstl.jpg') }}" alt="Gallery 3"></div>
+            <div class="gallery-item scroll-reveal scale-up"><img src="{{ url_for('static', filename='bed.jpg') }}" alt="Gallery 4"></div>
+        </div>
+    </div>
+</section>
+
+<section id="contact" class="section">
+    <div class="container">
+        <h2 class="section-title scroll-reveal fade-up">Get In Touch</h2>
+        <div class="contact-container">
+            <form id="contact-form" class="contact-form scroll-reveal slide-left"
+                  method="POST" action="{{ url_for('public.contact') }}">
+                <input type="text" name="name" placeholder="Your Name" required
+                       value="{{ current_user.full_name if current_user.is_authenticated else '' }}">
+                <input type="email" name="email" placeholder="Your Email" required
+                       value="{{ current_user.email if current_user.is_authenticated else '' }}">
+                <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn-primary">Send Message</button>
+            </form>
+            <div class="contact-info scroll-reveal slide-right">
+                <h3>Contact Information</h3>
+                <p><i class="fa-solid fa-location-dot"></i> 1-2-3 Secundrabad, Hyderabad</p>
+                <p><i class="fa-solid fa-phone"></i> 9999955555</p>
+                <p><i class="fa-solid fa-envelope"></i> support@urbanstay.com</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

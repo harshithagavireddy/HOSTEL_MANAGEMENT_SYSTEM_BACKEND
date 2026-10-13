@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard | UrbanStay{% endblock %}
+
+{% block navbar_class %}scrolled solid-nav{% endblock %}
+{% block body_class %}page-inner{% endblock %}
+
+{% block content %}
+<section class="section page-section">
+    <div class="container">
+        <div class="dash-header">
+            <div>
+                <h2>Student Dashboard</h2>
+                <p>Hello, <strong>{{ user.full_name }}</strong> &mdash; manage your bookings, profile, and complaints.</p>
+            </div>
+            <a href="{{ url_for('public.index') }}#rooms" class="btn-primary">Browse Rooms</a>
+        </div>
+
+        <div class="dash-tabs">
+            <a href="#bookings" class="dash-tab active">My Bookings</a>
+            <a href="#profile" class="dash-tab">Profile</a>
+            <a href="#complaints" class="dash-tab">Complaints</a>
+        </div>
+
+        <!-- Bookings -->
+        <div id="bookings" class="dash-panel">
+            <h3>My Bookings</h3>
+            {% if bookings %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Room</th>
+                            <th>Type</th>
+                            <th>Price</th>
+                            <th>Check-in</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                            <td>#{{ b.id }}</td>
+                            <td>{{ b.room.room_number if b.room else '—' }}</td>
+                            <td>{{ b.room.room_type if b.room else '—' }}</td>
+                            <td>{% if b.room %}Rs.{{ '%.0f'|format(b.room.price_monthly) }}{% else %}—{% endif %}</td>
+                            <td>{{ b.check_in or '—' }}</td>
+                            <td><span class="badge badge-{{ b.status }}">{{ b.status }}</span></td>
+                            <td>
+                                {% if b.status in ('pending', 'approved') %}
+                                <form method="POST" action="{{ url_for('dashboard.cancel_booking', booking_id=b.id) }}" class="inline-form"
+                                      onsubmit="return confirm('Cancel this booking?');">
+                                    <button type="submit" class="btn-danger btn-xs">Cancel</button>
+                                </form>
+                                {% else %}
+                                —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="empty-state">No bookings yet. <a href="{{ url_for('public.index') }}#rooms">Browse rooms</a> to request one.</p>
+            {% endif %}
+        </div>
+
+        <!-- Profile -->
+        <div id="profile" class="dash-panel">
+            <h3>My Profile</h3>
+            <form method="POST" action="{{ url_for('dashboard.update_profile') }}" class="auth-form narrow-form">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" value="{{ user.full_name }}" required>
+                <label for="email">Email (read-only)</label>
+                <input type="email" id="email" value="{{ user.email }}" disabled>
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" value="{{ user.phone or '' }}">
+                <p class="form-hint">Member since {{ user.created_at.strftime('%d %b %Y') if user.created_at else '—' }}</p>
+                <button type="submit" class="btn-primary">Save Profile</button>
+            </form>
+        </div>
+
+        <!-- Complaints -->
+        <div id="complaints" class="dash-panel">
+            <h3>Submit a Complaint</h3>
+            <form method="POST" action="{{ url_for('dashboard.submit_complaint') }}" class="auth-form narrow-form">
+                <label for="subject">Subject</label>
+                <input type="text" id="subject" name="subject" placeholder="e.g. Wi-Fi issues" required>
+                <label for="message">Message</label>
+                <textarea id="message" name="message" rows="4" placeholder="Describe the issue..." required></textarea>
+                <button type="submit" class="btn-primary">Submit Complaint</button>
+            </form>
+
+            <h3 class="mt-lg">My Complaints</h3>
+            {% if complaints %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Admin Response</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in complaints %}
+                        <tr>
+                            <td>#{{ c.id }}</td>
+                            <td>
+                                <strong>{{ c.subject }}</strong>
+                                <div class="cell-sub">{{ c.message }}</div>
+                            </td>
+                            <td><span class="badge badge-{{ c.status }}">{{ c.status }}</span></td>
+                            <td>{{ c.admin_response or '—' }}</td>
+                            <td>{{ c.created_at.strftime('%d %b %Y') if c.created_at else '—' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="empty-state">No complaints filed.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

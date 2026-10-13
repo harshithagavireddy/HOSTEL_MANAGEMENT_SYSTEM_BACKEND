@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Register | UrbanStay{% endblock %}
+
+{% block navbar_class %}scrolled solid-nav{% endblock %}
+{% block body_class %}page-inner{% endblock %}
+
+{% block content %}
+<section class="section page-section">
+    <div class="container auth-container">
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p class="form-hint">Join UrbanStay as a student, or register as admin with the secret code.</p>
+            <form method="POST" class="auth-form" id="register-form">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" placeholder="Your full name" required>
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="you@example.com" required>
+
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" placeholder="Optional phone number">
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Min. 6 characters" required minlength="6">
+
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat password" required minlength="6">
+
+                <label for="role">Account Type</label>
+                <select id="role" name="role">
+                    <option value="student" selected>Student</option>
+                    <option value="admin">Admin</option>
+                </select>
+
+                <div id="admin-code-wrap" class="hidden">
+                    <label for="admin_code">Admin Secret Code</label>
+                    <input type="password" id="admin_code" name="admin_code" placeholder="Enter admin secret code">
+                </div>
+
+                <button type="submit" class="btn-primary">Register</button>
+            </form>
+            <p class="auth-switch">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const roleSelect = document.getElementById('role');
+    const adminWrap = document.getElementById('admin-code-wrap');
+    function toggleAdminCode() {
+        if (roleSelect.value === 'admin') {
+            adminWrap.classList.remove('hidden');
+        } else {
+            adminWrap.classList.add('hidden');
+        }
+    }
+    roleSelect.addEventListener('change', toggleAdminCode);
+    toggleAdminCode();
+</script>
+{% endblock %}
